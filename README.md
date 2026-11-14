@@ -1,80 +1,95 @@
-# Jumcart Verify
+# Supabase setup guide
 
-**Commerce. Verified.**
+This repository is prepared for a Supabase-backed merchant SaaS foundation. The public homepage and merchant dashboard remain in place, but the actual authentication and database foundation is intentionally implemented as a secure backend starter that must be configured in Supabase.
 
-Jumcart Verify is an African-first commerce trust infrastructure product. This repository contains the public marketing site and a separately routed merchant-dashboard frontend MVP.
+## 1. Create a Supabase project
 
-> **The dashboard is frontend-only and uses clearly labelled demo data.** It does not process payments, verify real transactions, store merchant/customer information, perform fraud detection, send notifications, or connect to third-party services. Payment-provider integrations are shown as disconnected until genuinely configured.
+1. Go to https://supabase.com and create a new project.
+2. Record the project URL and anon key from the project settings.
+3. Create a new database password if prompted.
+4. Keep the service-role key in a secure environment only. Do not commit it to Git.
 
-## Requirements
+## 2. Configure local environment variables
 
-- Node.js 20.9 or later
-- npm (or a compatible package manager)
-
-## Local development
+Copy `.env.example` to `.env.local` and fill in the values:
 
 ```bash
-git clone https://github.com/Sanijibo/JumcartFlow-.git
-cd JumcartFlow-
+cp .env.example .env.local
+```
+
+Use the Supabase values for:
+
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `NEXT_PUBLIC_APP_URL` (e.g. `http://localhost:3000`)
+- `SUPABASE_SERVICE_ROLE_KEY` (server-only secret, never exposed to the browser)
+- `SUPABASE_AUTH_REDIRECT_URL` (typically `http://localhost:3000/auth/callback`)
+
+## 3. Apply the database migrations
+
+From the repo root, run:
+
+```bash
+supabase db push
+```
+
+If you use the Supabase CLI for local development, run this after logging in:
+
+```bash
+supabase login
+supabase link --project-ref <your-project-ref>
+supabase db push
+```
+
+The included migration files are:
+
+- `supabase/migrations/001_initial_schema.sql`
+- `supabase/migrations/002_row_level_security.sql`
+
+## 4. Configure authentication in Supabase
+
+Inside your Supabase dashboard:
+
+1. Open Authentication > Settings.
+2. Enable email sign-in if needed.
+3. Configure email confirmation behavior to match your product requirements.
+4. Set the Site URL and redirect URLs to your local app while developing.
+5. Add `http://localhost:3000/auth/callback` as a redirect URL for signup verification.
+
+## 5. Run the app
+
+```bash
 npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) for the public site or [http://localhost:3000/app](http://localhost:3000/app) for the merchant demo dashboard.
+Routes:
 
-## Dashboard routes
+- `/` — marketing homepage
+- `/login` — merchant login
+- `/register` — merchant registration
+- `/forgot-password` — password reset request
+- `/reset-password` — set a new password
+- `/onboarding` — business onboarding form
+- `/app` — merchant dashboard workspace
 
-| Route | Module |
-| --- | --- |
-| `/app` | Overview metrics, sample payment performance chart, recent activity, and sample orders |
-| `/app/orders` | Searchable/filterable sample orders, customer details, payment and delivery status, detail dialog |
-| `/app/payments` | Sample payment references, providers, amounts, statuses, and illustrative matching/detail view |
-| `/app/fraud` | Clearly labelled duplicate-reference, amount-mismatch, and repeated-failure demo scenarios |
-| `/app/deliveries` | Sample delivery history and a non-verifying passcode UI preview |
-| `/app/analytics` | Illustrative order, payment, delivery, and merchant trust metrics |
-| `/app/integrations` | Paystack, Flutterwave, Monnify, WhatsApp, and logistics providers, all disconnected |
-| `/app/settings` | Sample merchant profile, session-only preferences, notification controls, security guidance |
+## 6. Security notes
 
-The marketing landing page remains at `/` and is not replaced by the dashboard.
+- Never expose the service-role key to the browser.
+- Never commit `.env.local` files.
+- Never trust client-supplied business IDs without authorization checks.
+- Business access is enforced with Supabase Row Level Security policies and server-side checks.
+- The front-end dashboard is protected by server-side auth checks, but the database policies remain the real enforcement layer.
 
-## Available scripts
+## 7. Production deployment
 
-| Command | Description |
-| --- | --- |
-| `npm run dev` | Start the local development server |
-| `npm run build` | Create an optimized production build |
-| `npm run start` | Run the production build locally |
-| `npm run lint` | Run ESLint |
-| `npm run typecheck` | Check TypeScript types without emitting files |
+When deploying to Vercel or another host:
 
-Before opening a pull request, run `npm run lint`, `npm run typecheck`, and `npm run build`.
+1. Add environment variables in the deployment platform.
+2. Set `NEXT_PUBLIC_APP_URL` to the production URL.
+3. Keep the service-role key in secure server runtime settings only.
+4. Configure Supabase auth redirect URLs for production before enabling live merchant access.
 
-## Project structure
+## 8. Current implementation status
 
-```text
-app/                       Public site and App Router pages
-  app/                     Merchant dashboard route group at /app
-    orders/ payments/ fraud/ deliveries/ analytics/ integrations/ settings/
-components/dashboard/       Dashboard shell and reusable dashboard modules
-components/                 Reusable marketing site components
-lib/                        Shared product content and configuration
-public/                      Static assets
-```
-
-Keep server components as the default. Dashboard interactions are isolated in client components. The current demo state is local to the browser and is not persisted to a backend.
-
-## Integrations and security
-
-No provider connection or authentication has been implemented. Do not treat demo statuses, charts, alert scenarios, order records, or delivery passcode UI as genuine information. Do not add credentials to source control. When real services are introduced, use secure server-side integrations, validate provider callbacks, authenticate and authorize merchant access, and configure secrets only in the deployment environment.
-
-## Deploying to Vercel
-
-Import `Sanijibo/JumcartFlow-` into Vercel, use the detected Next.js framework preset and default build settings, and deploy. No environment variables are required for the frontend MVP. Confirm integrations remain disconnected unless real server-side setup and credentials have been completed.
-
-## GitHub workflow
-
-Work on a feature branch, run lint, typecheck, and production build checks, then open a pull request for review. Never add credentials to source files or workflow definitions.
-
-## License
-
-No license has been selected yet. Add one before distributing this project for reuse.
+This repository includes the secure database and auth foundation, but the project is not yet connected to a live Supabase instance in this environment. The SQL schema and RLS rules are prepared, but you must create the Supabase project and apply the migrations in your own environment before testing login or protected routes against real data.
