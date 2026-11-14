@@ -10,37 +10,13 @@
   --color-forest: #173c32;
 }
 
-:root {
-  color-scheme: light;
-}
+:root { color-scheme: light; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: #f8faf6; color: #12231f; font-family: var(--font-manrope), sans-serif; -webkit-font-smoothing: antialiased; }
+::selection { background: #b7f36b; color: #12231f; }
+a { color: inherit; text-decoration: none; }
+button, a { -webkit-tap-highlight-color: transparent; }
 
-* {
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  margin: 0;
-  background: #f8faf6;
-  color: #12231f;
-  font-family: var(--font-manrope), sans-serif;
-  -webkit-font-smoothing: antialiased;
-}
-
-::selection {
-  background: #b7f36b;
-  color: #12231f;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-button,
-a {
-  -webkit-tap-highlight-color: transparent;
-}
+/* Sidebar active link */
+a[href="/app"], a[href="/app/orders"], a[href="/app/payments"], a[href="/app/fraud"], a[href="/app/deliveries"], a[href="/app/analytics"], a[href="/app/integrations"], a[href="/app/settings"] { transition: background-color .15s, color .15s; }

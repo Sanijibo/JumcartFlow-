@@ -2,9 +2,9 @@
 
 **Commerce. Verified.**
 
-Jumcart Verify is the starting point for an African-first commerce trust infrastructure product. This repository contains a responsive Next.js App Router website and a production-minded foundation for building the product experience.
+Jumcart Verify is an African-first commerce trust infrastructure product. This repository contains the public marketing site and a separately routed merchant-dashboard frontend MVP.
 
-> The current site is a frontend foundation only. It does not process payments, verify transactions, store customer information, or connect to third-party services. No production integrations or credentials are included.
+> **The dashboard is frontend-only and uses clearly labelled demo data.** It does not process payments, verify real transactions, store merchant/customer information, perform fraud detection, send notifications, or connect to third-party services. Payment-provider integrations are shown as disconnected until genuinely configured.
 
 ## Requirements
 
@@ -14,18 +14,28 @@ Jumcart Verify is the starting point for an African-first commerce trust infrast
 ## Local development
 
 ```bash
-# Clone the repository and enter the project directory
- git clone https://github.com/Sanijibo/JumcartFlow-.git
- cd JumcartFlow-
-
-# Install dependencies
+git clone https://github.com/Sanijibo/JumcartFlow-.git
+cd JumcartFlow-
 npm install
-
-# Start the development server
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to view the app.
+Open [http://localhost:3000](http://localhost:3000) for the public site or [http://localhost:3000/app](http://localhost:3000/app) for the merchant demo dashboard.
+
+## Dashboard routes
+
+| Route | Module |
+| --- | --- |
+| `/app` | Overview metrics, sample payment performance chart, recent activity, and sample orders |
+| `/app/orders` | Searchable/filterable sample orders, customer details, payment and delivery status, detail dialog |
+| `/app/payments` | Sample payment references, providers, amounts, statuses, and illustrative matching/detail view |
+| `/app/fraud` | Clearly labelled duplicate-reference, amount-mismatch, and repeated-failure demo scenarios |
+| `/app/deliveries` | Sample delivery history and a non-verifying passcode UI preview |
+| `/app/analytics` | Illustrative order, payment, delivery, and merchant trust metrics |
+| `/app/integrations` | Paystack, Flutterwave, Monnify, WhatsApp, and logistics providers, all disconnected |
+| `/app/settings` | Sample merchant profile, session-only preferences, notification controls, security guidance |
+
+The marketing landing page remains at `/` and is not replaced by the dashboard.
 
 ## Available scripts
 
@@ -42,30 +52,28 @@ Before opening a pull request, run `npm run lint`, `npm run typecheck`, and `npm
 ## Project structure
 
 ```text
-app/                  App Router pages, layout, and global styles
-components/           Reusable site components
-lib/                  Shared product content and configuration
-public/               Static assets
+app/                       Public site and App Router pages
+  app/                     Merchant dashboard route group at /app
+    orders/ payments/ fraud/ deliveries/ analytics/ integrations/ settings/
+components/dashboard/       Dashboard shell and reusable dashboard modules
+components/                 Reusable marketing site components
+lib/                        Shared product content and configuration
+public/                      Static assets
 ```
 
-Keep server components as the default. Add a client component only when browser-side interactivity is needed. Put shared content and typed configuration in `lib/`, and reusable interface pieces in `components/`.
+Keep server components as the default. Dashboard interactions are isolated in client components. The current demo state is local to the browser and is not persisted to a backend.
 
-## Styling and icons
+## Integrations and security
 
-The project uses Tailwind CSS 4 through its PostCSS plugin. Global theme tokens and base styles live in `app/globals.css`. Icons come from [Lucide React](https://lucide.dev/).
+No provider connection or authentication has been implemented. Do not treat demo statuses, charts, alert scenarios, order records, or delivery passcode UI as genuine information. Do not add credentials to source control. When real services are introduced, use secure server-side integrations, validate provider callbacks, authenticate and authorize merchant access, and configure secrets only in the deployment environment.
 
 ## Deploying to Vercel
 
-1. Import `Sanijibo/JumcartFlow-` into [Vercel](https://vercel.com/new) and authorize access to the repository.
-2. Use the detected Next.js framework preset and default build settings.
-3. No environment variables are required for this frontend foundation.
-4. Deploy. Vercel can build subsequent pushes to the connected branch automatically.
-
-Do not commit credentials. If future server-side integrations need secrets, configure them in Vercel Project Settings and document variable names (never secret values) here. Validate and authorize any external integration before exposing it to the application.
+Import `Sanijibo/JumcartFlow-` into Vercel, use the detected Next.js framework preset and default build settings, and deploy. No environment variables are required for the frontend MVP. Confirm integrations remain disconnected unless real server-side setup and credentials have been completed.
 
 ## GitHub workflow
 
-Work on a feature branch, run the checks above, and open a pull request for review before merging. Add automated checks with GitHub Actions as the project grows; do not put credentials in workflow files.
+Work on a feature branch, run lint, typecheck, and production build checks, then open a pull request for review. Never add credentials to source files or workflow definitions.
 
 ## License
 
